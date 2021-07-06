@@ -13,10 +13,13 @@ app.get("/quotes", function(request, response){
 
 app.get("/quotes/:id", function(request, response){
   let data = quotes;
-  let id = parseInt(request.params.id);
+  let requestValue = request.params.id;
+  if (isNaN(requestValue)){ return response.status(400).send(`"${requestValue}" Does not is a number valid for search by ID`);}
+  let id = parseInt(requestValue);
+  if (id <= 0){response.status(400).send(`${id} Does not is a valid number`);}
   const resultQuote = data.find((quote)=>quote.id === id);
   // resultado de filter si se sabe que solamente un elemento cumplia con la condicion filtro, y acceder luego al valor cero de esa nueva array resltandte 
-  response.send(resultQuote);
+  response.status(200).send(resultQuote);
 });
  
   // let data= quotes;
