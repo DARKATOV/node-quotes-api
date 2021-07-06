@@ -1,8 +1,7 @@
-const { json } = require("express");
 const express = require("express");
 const app = express();
 let fs = require('fs');
-const quotes = require("./quotes.json");
+let quotes = require("./quotes.json");  // pero quotes lo saco del json, asi que deberia estar actualizado no? y es un let ademas 
 
 /* fynctions fs   normalizada?  */    
 
@@ -49,8 +48,8 @@ app.post("/quotes", (request, response) => {
   response.status(201).json(quotes);
 });
 
-app.put("/quotes/:id", (request, response) => {
-  try{
+app.put("/quotes/:id", (request, response) => { // async aqui??
+  try{     // try ??? 
   let data = quotes;
   let idValue = parseInt(request.params.id);
   console.log(idValue);
@@ -63,7 +62,7 @@ app.put("/quotes/:id", (request, response) => {
   console.log(selectQuote.author);
   selectQuote.id = idValue;
   console.log(selectQuote.id);
-  fs.writeFileSync("./quotes.json", JSON.stringify(data, null, 2))
+  fs.writeFileSync("./quotes.json", JSON.stringify(data, null, 2)) // wait aqui ? 
   response.status(201).json(data);
   } catch (err) {
     response.status(400).json(err)
@@ -71,7 +70,20 @@ app.put("/quotes/:id", (request, response) => {
   }
 });
 
-
+app.delete("/quotes/:id", (request, response) => { 
+  try{    
+  let data = quotes;  // lo que yo estoy mandando es esta constante en memoria ? pero puedo garantizar qe modifica el archivo ? 
+  let idValue = parseInt(request.params.id);
+  console.log(idValue);
+  let selectQuote = data.find(element => element.id === idValue);
+  data.splice(selectQuote,1);
+  fs.writeFileSync("./quotes.json", JSON.stringify(data, null, 2)) // wait aqui ? 
+  response.status(201).json(data);
+  } catch (err) {
+    response.status(400).json(err)
+    console.log(err.message)
+  }
+});
 
 
   // let data= quotes;
