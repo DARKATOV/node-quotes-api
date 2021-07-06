@@ -1,7 +1,19 @@
+const { json } = require("express");
 const express = require("express");
 const app = express();
 let fs = require('fs');
 const quotes = require("./quotes.json");
+
+/* fynctions fs   normalizada?  */    
+
+let fsAll =  async (ruta, body, cb) => {
+  let fss = await fs.writeFile(ruta, body, error => {
+      error ? 
+      cb('not successful'. error) :
+      cb('successful')
+  })
+
+}
 
 app.get('/', function(request, response) {
   response.send('/quotes/17 should return one quote, by id')
@@ -35,6 +47,28 @@ app.post("/quotes", (request, response) => {
   fs.writeFileSync("./quotes.json", JSON.stringify(data, null, 2)) /* con un console log estaria trasnformandolo en sincrono? paro el servidor ? consistencia a velocidad / por que el null y el dos */
   // fs.writeFile();
   response.status(201).json(quotes);
+});
+
+app.put("/quotes/:id", (request, response) => {
+  try{
+  let data = quotes;
+  let idValue = parseInt(request.params.id);
+  console.log(idValue);
+  let selectQuote = data.find(element => element.id === idValue);
+  let newInfo = request.body;
+  console.log(newInfo);
+  selectQuote.quote = newInfo.quote;
+  console.log(selectQuote.quote);
+  selectQuote.author = newInfo.author;
+  console.log(selectQuote.author);
+  selectQuote.id = idValue;
+  console.log(selectQuote.id);
+  fs.writeFileSync("./quotes.json", JSON.stringify(data, null, 2))
+  response.status(201).json(data);
+  } catch (err) {
+    response.status(400).json(err)
+    console.log(err.message)
+  }
 });
 
 
